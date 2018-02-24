@@ -2,12 +2,11 @@ FROM gradle:jdk8 as builder
 
 WORKDIR /home/gradle/project
 
-COPY . .
+COPY --chown=gradle:gradle . .
 
 WORKDIR ./Kuroji-Eventrouter-Server
 
-RUN chown -R gradle:gradle /home/gradle \
-    && gradle shadowJar -s --no-daemon --console plain
+RUN gradle shadowJar -s --no-daemon --console plain
 
 FROM openjdk:8-jre-alpine
 
