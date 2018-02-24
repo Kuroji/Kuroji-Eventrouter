@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package xyz.usbpc.kuroji.eventrouter.api;
+import "google/protobuf/any.proto";
+
+
+service MessageRouterSubscriber {
+    rpc onEvent (Event) returns (SubResponse) {}
+}
+
+message SubResponse {
+}
+
+message Event {
+    string trace_id = 1;
+    EventType type = 2;
+    uint64 bot_id = 3;
+    uint32 shard_id = 4;
+    google.protobuf.Any event = 5;
+    RoutingInfo routing = 6;
+}
+
+message RoutingInfo {
+    uint64 id = 1;
+}
+
+enum EventType {
+    UNKNOWN = 0;
+    READY = 1;
+    CHANNEL_CREATE = 2;
+    CHANNEL_UPDATE = 3;
+    CHANNEL_DELETE = 4;
+    CHANNEL_PINS_UPDATE = 5;
+    GUILD_CREATE = 6;
+    GUILD_UPDATE = 7;
+    GUILD_DELETE = 8;
+    GUILD_BAN_ADD = 9;
+    GUILD_BAN_REMOVE = 10;
+    GUILD_EMOJIS_UPDATE = 11;
+    GUILD_INTEGRATIONS_UPDATE = 12;
+    GUILD_MEMBER_ADD = 13;
+    GUILD_MEMBER_REMOVE = 14;
+    GUILD_MEMBER_UPDATE = 15;
+    GUILD_MEMBERS_CHUNCK = 16;
+    GUILD_ROLE_CREATE = 17;
+    GUILD_ROLE_UPDATE = 18;
+    GUILD_ROLE_DELETE = 19;
+    MESSAGE_CREATE = 20;
+    MESSAGE_UPDATE = 21;
+    MESSAGE_DELETE = 22;
+    MESSAGE_DELETE_BULK = 23;
+    MESSAGE_REACTION_ADD = 24;
+    MESSAGE_REACTION_REMOVE = 25;
+    MESSAGE_REACTION_REMOVE_ALL = 26;
+    PRESENCE_UPDATE = 27;
+    TYPING_START = 28;
+    USER_UPDATE = 29;
+    VOICE_STATE_UPDATE = 30;
+    VOICE_SERVER_UPDATE = 31;
+    WEBHOOKS_UPDATE = 32;
+}
+
+message SubscriberGroup {
+    repeated EventType topics = 1;
+    string name = 2;
+}
+
+message Subscriber {
+    string hostname = 1;
+    uint32 port = 2;
+    repeated string claimed = 3;
+    enum Status {
+        UNKNOWN = 0;
+        RUNNING = 1;
+        SHUTTING_DOWN = 3;
+    }
+    Status status = 4;
+}
