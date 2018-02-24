@@ -13,21 +13,29 @@ import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.curator.x.async.AsyncCuratorFramework
 import org.apache.curator.x.async.api.CreateOption
 import org.apache.zookeeper.CreateMode
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
 import xyz.usbpc.kuroji.eventrouter.server.internal.MessageMultiplier
 import xyz.usbpc.kuroji.eventrouter.server.internal.SubGroupManager
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
+fun Any.getLogger() : Logger =
+    if (this.javaClass.name.endsWith("\$Companion"))
+        LoggerFactory.getLogger(this.javaClass.declaringClass)
+    else
+        LoggerFactory.getLogger(this.javaClass)
+
 fun main(args: Array<String>) = runBlocking {
+    val LOGGER = ::main.getLogger()
     val rawClient = newCuratorFrameworkClient(args[0])
     rawClient.start()
     val client = rawClient.usingNamespace("eventrouter")
     try {
         client.blockUntilConnected(30, TimeUnit.SECONDS)
     } catch (ex: InterruptedException) {
-        //TODO logging
-        println("Did not connect with zookeeper in 30 seconds")
+        LOGGER.error("Could not connect to to zookeeper in 30 seconds.")
         return@runBlocking
     }
     val messageMultiplier = MessageMultiplier()
@@ -54,81 +62,62 @@ fun main(args: Array<String>) = runBlocking {
 
     //Start thing that does the sending... so create channel, nameresolver etc.
     val controlContext = newFixedThreadPoolContext(4, "Control-Thread")
-    //TODO logging
     val knownSubGroups = mutableMapOf<String, SubGroupManager>()
-    println("Starting main control job...")
+    LOGGER.info("Starting main control job")
     val mainControlJob = launch(controlContext) {
+        val LOGGER = this.getLogger()
         try {
             while (isActive) {
                 //Look and watch for children of the "/clients" znode
                 val stage = aclient.watched().children.forPath("/clients")
-
-                println("Getting all children")
+                LOGGER.trace("Getting all children")
                 //Get all child znodes of "/clients"
                 val subGroups = stage.await()
-                println("Looking at what SubGroups were deleted")
                 //Calculate all SubGroups not present on zookeeper anymore
                 val delSubGroups = knownSubGroups.keys - subGroups
-                println("Looking at what SubGroups were created")
                 //Calculate all SubGroups new in zookeeper now
                 val newSubGroups = subGroups - knownSubGroups.keys
                 //Bring the knownSubGroups up to speed
-                println("Doing things with the deleted sub groups")
+                LOGGER.trace("Shutting down all Managers for deleted SubGroups")
                 knownSubGroups.filterKeys { it in delSubGroups }.forEach { (key, subGroupManager) ->
                     subGroupManager.shutdown()
                     knownSubGroups.remove(key)
                 }
-                println("Doing things with the new sub groups")
+                LOGGER.trace("Starting up Managers for new SubGroups")
                 //Create new SubGroupManagers
                 newSubGroups.forEach { name ->
                     val subGroupManager = SubGroupManager(name, client, messageMultiplier)
                     subGroupManager.start(controlContext)
                     knownSubGroups[name] = subGroupManager
                 }
-
-                println("Waiting for something to change")
+                LOGGER.trace("Waiting for some change in the SubGroups")
                 //Wait until there is some change then repeat
                 stage.event().await()
             }
         } catch (ex: CancellationException) {
-            //TODO logging
-            println("We have been canceled!")
+            LOGGER.info("We have been canceled!")
         } finally {
-            //Let's clean our mess!
-            //TODO logging
-
         }
 
     }
-    //TODO logging
-    println("Main control job started...")
 
-    println("Registering shutdown hook...")
-
+    LOGGER.debug("Registering shutdown hook")
     //Tell the JVM what we want to do on shutdown
     Runtime.getRuntime().addShutdownHook(
-            thread (start = false, isDaemon = false) {
+            thread (start = false, isDaemon = false, name = "Shutdown") {
                 runBlocking {
-                    //TODO logging
-                    println("Shutting down main Control job...")
+                    LOGGER.info("Shutting down...")
                     mainControlJob.cancel()
-                    println("Shutting down sending")
                     knownSubGroups.values.forEach { subGroupManager ->
                         subGroupManager.shutdown()
                     }
-                    println("Shut down main control job")
                 }
-                println("closing connection to zookeeper")
                 rawClient.close()
-                println("Closed connection to zookeeper")
+                LOGGER.info("Bye <3")
             }
     )
-    //TODO logging
-    println("Shutdown hook registered...")
-    runBlocking {
-        mainControlJob.join()
-        println("Bye <3")
-    }
+
+    mainControlJob.join()
 
 }
 
