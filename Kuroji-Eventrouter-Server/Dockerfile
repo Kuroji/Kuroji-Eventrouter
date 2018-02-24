@@ -2,7 +2,7 @@ FROM gradle:jdk8 as builder
 
 WORKDIR /home/gradle/project
 
-COPY --chown=gradle:gradle . .
+ADD --chown=gradle:gradle . .
 
 WORKDIR ./Kuroji-Eventrouter-Server
 
