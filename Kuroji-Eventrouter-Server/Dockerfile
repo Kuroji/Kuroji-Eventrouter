@@ -6,7 +6,8 @@ COPY . .
 
 WORKDIR ./Kuroji-Eventrouter-Server
 
-RUN gradle shadowJar -s --no-daemon --console plain
+RUN chown -R gradle:gradle /home/gradle \
+    && gradle shadowJar -s --no-daemon --console plain
 
 FROM openjdk:8-jre-alpine
 
