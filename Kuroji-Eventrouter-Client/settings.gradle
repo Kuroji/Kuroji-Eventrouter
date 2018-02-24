@@ -1,2 +1,4 @@
 rootProject.name = 'kuroji-eventrouter-client'
 
+include ':kuroji-eventrouter-shared'
+project(":kuroji-eventrouter-shared").projectDir = "$rootDir/../Kuroji-Eventrouter-Shared" as File
