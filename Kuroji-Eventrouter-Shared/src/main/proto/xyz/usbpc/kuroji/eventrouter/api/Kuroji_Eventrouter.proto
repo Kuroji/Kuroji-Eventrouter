@@ -68,7 +68,7 @@ message SubscriberGroup {
 message Subscriber {
     string hostname = 1;
     uint32 port = 2;
-    repeated string claimed = 3;
+    repeated RoutingInfo claimed = 3;
     enum Status {
         UNKNOWN = 0;
         RUNNING = 1;

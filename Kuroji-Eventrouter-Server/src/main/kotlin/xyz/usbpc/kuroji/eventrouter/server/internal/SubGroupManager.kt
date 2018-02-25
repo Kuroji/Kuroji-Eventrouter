@@ -18,7 +18,7 @@ import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
 import xyz.usbpc.kuroji.eventrouter.api.MessageRouterSubscriberGrpc
 import xyz.usbpc.kuroji.eventrouter.server.getLogger
 import xyz.usbpc.kuroji.eventrouter.server.grpc.EventRouterLoadBalancerFactory
-import xyz.usbpc.kuroji.eventrouter.server.zoo.ZookeeperNameResolverProvider
+import xyz.usbpc.kuroji.eventrouter.server.grpc.ZookeeperNameResolverProvider
 import java.util.*
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -155,7 +155,7 @@ internal fun createChannelForSubGroup(client: CuratorFramework, groupName: Strin
     return ManagedChannelBuilder
             .forTarget("/$groupName")
             .nameResolverFactory(nameResolver)
-            .loadBalancerFactory(EventRouterLoadBalancerFactory)
+            .loadBalancerFactory(EventRouterLoadBalancerFactory(client))
             //TODO: figure out how to TLS https://github.com/grpc/grpc-java/blob/master/SECURITY.md
             .usePlaintext(true)
             .build()

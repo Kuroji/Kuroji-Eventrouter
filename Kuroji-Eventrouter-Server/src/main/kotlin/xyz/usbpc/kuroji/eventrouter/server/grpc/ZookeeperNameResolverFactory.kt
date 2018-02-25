@@ -1,4 +1,4 @@
-package xyz.usbpc.kuroji.eventrouter.server.zoo
+package xyz.usbpc.kuroji.eventrouter.server.grpc
 
 import io.grpc.Attributes
 import io.grpc.EquivalentAddressGroup
