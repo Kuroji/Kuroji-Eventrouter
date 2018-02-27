@@ -14,7 +14,9 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'java'
 
 repositories {
-    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+
 }
 
 dependencies {
@@ -22,6 +24,9 @@ dependencies {
     compile 'io.grpc:grpc-netty:1.10.0'
     compile 'io.grpc:grpc-protobuf:1.10.0'
     compile 'io.grpc:grpc-stub:1.10.0'
+
+    compile 'com.github.Kuroji:Kuroji-Protocord:f80dd7549d'
+    //apiElements 'com.github.Kuroji:Kuroji-Protocord:f80dd7549d'
 }
 
 sourceSets {

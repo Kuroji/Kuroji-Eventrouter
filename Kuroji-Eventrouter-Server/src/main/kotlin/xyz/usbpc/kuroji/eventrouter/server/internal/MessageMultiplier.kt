@@ -5,9 +5,10 @@ import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
 import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
+import xyz.usbpc.kuroji.proto.discord.events.Event
 
 class MessageMultiplier {
-    private val channels: MutableMap<KurojiEventrouter.EventType, MutableList<NamedChannel<KurojiEventrouter.Event>>> = mutableMapOf()
+    private val channels: MutableMap<Event.EventType, MutableList<NamedChannel<KurojiEventrouter.Event>>> = mutableMapOf()
     fun onEvent(event: KurojiEventrouter.Event) {
         channels[event.type]?.forEach {
             try {
@@ -22,7 +23,7 @@ class MessageMultiplier {
         }
     }
 
-    suspend fun registerChannel(type: KurojiEventrouter.EventType, namedChannel: NamedChannel<KurojiEventrouter.Event>) {
+    suspend fun registerChannel(type: Event.EventType, namedChannel: NamedChannel<KurojiEventrouter.Event>) {
         mutex.withLock {
             channels.getOrPut(type) {
                 mutableListOf()
@@ -32,7 +33,7 @@ class MessageMultiplier {
     }
 
     private val mutex = Mutex()
-    suspend fun unregisterChannel(type: KurojiEventrouter.EventType, name: String) {
+    suspend fun unregisterChannel(type: Event.EventType, name: String) {
         mutex.withLock<Unit> {
             val list = channels[type] ?: return
             if (list.size == 1)

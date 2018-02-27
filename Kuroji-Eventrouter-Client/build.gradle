@@ -13,9 +13,12 @@ group 'xyz.usbpc.kuroji'
 version '0.0.1'
 
 apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
+
 
 repositories {
-    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -39,4 +42,12 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }

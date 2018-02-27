@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
 import xyz.usbpc.kuroji.eventrouter.server.internal.EventSendSubsystem
 import xyz.usbpc.kuroji.eventrouter.server.internal.MessageMultiplier
+import xyz.usbpc.kuroji.proto.discord.events.Event
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -46,7 +47,7 @@ fun main(args: Array<String>) = runBlocking {
             eventBuilder.traceId = "nope"
             eventBuilder.routing = KurojiEventrouter.RoutingInfo.newBuilder().setId(routing++).build()
             routing %= 30
-            eventBuilder.type = KurojiEventrouter.EventType.MESSAGE_CREATE
+            eventBuilder.type = Event.EventType.MESSAGE_CREATE
             //eventBuilder.event = com.google.protobuf.Any.pack(messageBuilder.build())
             messageMultiplier.onEvent(eventBuilder.build())
             //println("Send one Message!")

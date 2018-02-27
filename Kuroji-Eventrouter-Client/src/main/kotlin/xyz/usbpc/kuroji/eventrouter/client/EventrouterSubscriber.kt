@@ -10,12 +10,13 @@ import org.apache.curator.x.async.AsyncCuratorFramework
 import org.apache.curator.x.async.api.CreateOption
 import org.apache.zookeeper.CreateMode
 import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
+import xyz.usbpc.kuroji.proto.discord.events.Event
 import java.net.InetAddress
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.suspendCoroutine
 
-class EventRouterSubscriber(val consumerGroupName: String, val port: Int, val topics: Set<KurojiEventrouter.EventType>, zookeeper: String = "localhost:2181") {
+class EventRouterSubscriber(val consumerGroupName: String, val port: Int, val topics: Set<Event.EventType>, zookeeper: String = "localhost:2181") {
     val aclient: AsyncCuratorFramework
     val client: CuratorFramework
     val subDataMutex = Mutex()

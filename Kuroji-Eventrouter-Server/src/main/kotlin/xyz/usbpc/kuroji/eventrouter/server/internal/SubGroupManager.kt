@@ -19,6 +19,7 @@ import xyz.usbpc.kuroji.eventrouter.api.MessageRouterSubscriberGrpc
 import xyz.usbpc.kuroji.eventrouter.server.getLogger
 import xyz.usbpc.kuroji.eventrouter.server.grpc.EventRouterLoadBalancerFactory
 import xyz.usbpc.kuroji.eventrouter.server.grpc.ZookeeperNameResolverProvider
+import xyz.usbpc.kuroji.proto.discord.events.Event
 import java.util.*
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -33,8 +34,8 @@ class SubGroupManager(val name: String, client: CuratorFramework, val messageMul
     private val stub = MessageRouterSubscriberGrpc.newFutureStub(managedChannel)
     //The root is now our SubGroup we are responsible for
     private val aclient = AsyncCuratorFramework.wrap(client.usingNamespace("eventrouter/clients/$name"))
-    private val topics : MutableMap<KurojiEventrouter.EventType, TopicData> =
-            EnumMap(KurojiEventrouter.EventType::class.java)
+    private val topics : MutableMap<Event.EventType, TopicData> =
+            EnumMap(Event.EventType::class.java)
     private var controlJob: Job? = null
 
     private val startMutex = Mutex()
