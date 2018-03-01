@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kuroji-Eventrouter-Client.iml" filepath="$PROJECT_DIR$/.idea/modules/Kuroji-Eventrouter-Client.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kuroji-Eventrouter-Server.iml" filepath="$PROJECT_DIR$/.idea/modules/Kuroji-Eventrouter-Server.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kuroji-Eventrouter-Shared.iml" filepath="$PROJECT_DIR$/.idea/modules/Kuroji-Eventrouter-Shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kuroji-eventrouter-client.iml" filepath="$PROJECT_DIR$/.idea/modules/kuroji-eventrouter-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kuroji-eventrouter-client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/kuroji-eventrouter-client_main.iml" group="kuroji-eventrouter-client" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kuroji-eventrouter-client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/kuroji-eventrouter-client_test.iml" group="kuroji-eventrouter-client" />

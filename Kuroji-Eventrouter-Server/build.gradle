@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.30'
 
     repositories {
         jcenter()
@@ -19,7 +19,9 @@ mainClassName = 'xyz.usbpc.kuroji.eventrouter.server.MainKt'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
-    mavenCentral()
+    mavenLocal()
+    jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -32,6 +34,8 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+
+    compile 'com.github.Kuroji.Kuroji-Websocket:kuroji-websocket-client:7c68b7ea10'
 
     compile project (':kuroji-eventrouter-shared')
 }

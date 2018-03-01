@@ -40,7 +40,7 @@
     <orderEntry type="library" name="Gradle: io.grpc:grpc-protobuf:1.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.curator:curator-x-async:4.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.github.Kuroji:Kuroji-Protocord:f80dd7549d" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.30" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-guava:0.22.2" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.22.2" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.2" level="project" />
@@ -56,13 +56,12 @@
     <orderEntry type="library" name="Gradle: org.apache.curator:curator-client:4.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:21.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-common-protos:1.0.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.21" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.21" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.30" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.30" level="project" />
     <orderEntry type="library" name="Gradle: io.grpc:grpc-context:1.10.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.7" level="project" />
     <orderEntry type="library" name="Gradle: com.google.errorprone:error_prone_annotations:2.1.2" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:3.0.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-codec-http2:4.1.17.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-handler-proxy:4.1.17.Final" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.zookeeper:zookeeper:3.5.3-beta" level="project" />
@@ -78,6 +77,7 @@
     <orderEntry type="library" name="Gradle: io.netty:netty-buffer:4.1.17.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-resolver:4.1.17.Final" level="project" />
     <orderEntry type="library" name="Gradle: io.netty:netty-common:4.1.17.Final" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="kuroji-eventrouter-client_main" />
 </module>
