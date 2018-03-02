@@ -1,21 +1,14 @@
 import io.grpc.ServerBuilder
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.future.await
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.newSingleThreadContext
 import kotlinx.coroutines.experimental.runBlocking
-import org.apache.curator.framework.CuratorFramework
-import org.apache.curator.framework.CuratorFrameworkFactory
-import org.apache.curator.retry.ExponentialBackoffRetry
-import org.apache.curator.x.async.AsyncCuratorFramework
-import org.apache.curator.x.async.api.CreateOption
-import org.apache.zookeeper.CreateMode
 import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
 import xyz.usbpc.kuroji.eventrouter.api.MessageRouterSubscriberGrpc
 import xyz.usbpc.kuroji.eventrouter.client.EventRouterSubscriber
 import xyz.usbpc.kuroji.proto.discord.events.Event
-import java.net.InetAddress
+import xyz.usbpc.kuroji.proto.discord.objects.MessageOuterClass
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -47,7 +40,10 @@ fun main(args: Array<String>) = runBlocking {
 
 class MessageRouterSubscriber : MessageRouterSubscriberGrpc.MessageRouterSubscriberImplBase() {
     override fun onEvent(request: KurojiEventrouter.Event, responseObserver: StreamObserver<KurojiEventrouter.SubResponse>) {
-        println("Got a message! (${request.routing.id})")
+        val msg = request.event.unpack(MessageOuterClass.Message::class.java)
+
+        println("Message took: ${System.currentTimeMillis() - request.botId}ms")
+        println("${msg.author.username}: ${msg.content}")
         responseObserver.onNext(KurojiEventrouter.SubResponse.getDefaultInstance())
         responseObserver.onCompleted()
     }
