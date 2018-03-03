@@ -42,7 +42,7 @@
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.22.2" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.2" level="project" />
     <orderEntry type="module" module-name="kuroji-eventrouter-shared_main" />
-    <orderEntry type="library" name="Gradle: com.github.Kuroji:Kuroji-Protocord:f80dd7549d" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.Kuroji:Kuroji-Protocord:6e5dec6ae8" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.30" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.2.3" level="project" />

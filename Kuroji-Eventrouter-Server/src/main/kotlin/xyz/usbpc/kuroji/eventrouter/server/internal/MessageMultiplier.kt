@@ -1,46 +1,43 @@
 package xyz.usbpc.kuroji.eventrouter.server.internal
 
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
 import xyz.usbpc.kuroji.eventrouter.api.KurojiEventrouter
+import xyz.usbpc.kuroji.eventrouter.server.getLogger
 import xyz.usbpc.kuroji.proto.discord.events.Event
 
 class MessageMultiplier {
-    private val channels: MutableMap<Event.EventType, MutableList<NamedChannel<KurojiEventrouter.Event>>> = mutableMapOf()
+    companion object {
+        val log = this.getLogger()
+    }
+    private val functions: MutableMap<Event.EventType, MutableList<EventSender>> = mutableMapOf()
+    private val functionsMutex = Mutex()
+
     fun onEvent(event: KurojiEventrouter.Event) {
-        channels[event.type]?.forEach {
-            try {
-                if (!it.offer(event)) {
-                    //TODO logging
-                    println("Dropped ${event.type} for channel ${it.name}!")
-                }
-            } catch (ex: ClosedSendChannelException) {
-                //TODO logging info
-                println("Tried to send ${event.type} to channel ${it.name} but channel was closed.")
-            }
+        functions[event.type]?.forEach { sender ->
+            sender.sendEvent(event)
         }
     }
 
-    suspend fun registerChannel(type: Event.EventType, namedChannel: NamedChannel<KurojiEventrouter.Event>) {
-        mutex.withLock {
-            channels.getOrPut(type) {
+    suspend fun registerFunction(type: Event.EventType, eventSender: EventSender) {
+        functionsMutex.withLock {
+            functions.getOrPut(type) {
                 mutableListOf()
-            }.add(namedChannel)
+            }.add(eventSender)
         }
-        namedChannel.receive()
     }
 
-    private val mutex = Mutex()
-    suspend fun unregisterChannel(type: Event.EventType, name: String) {
-        mutex.withLock<Unit> {
-            val list = channels[type] ?: return
+    suspend fun unregisterFunction(type: Event.EventType, name: String) {
+        functionsMutex.withLock {
+            val list = functions[type] ?: return
+            list.remove(list.single{it.name == name})
             if (list.size == 1)
-                channels.remove(type)
-            list.remove(list.single { it.name == name })
+                functions.remove(type)
         }
     }
 }
 
-class NamedChannel<T>(val name: String, capacity: Int = 0, channel: Channel<T> = Channel(capacity)) : Channel<T> by channel
+interface EventSender {
+    val name: String
+    fun sendEvent (event: KurojiEventrouter.Event)
+}
