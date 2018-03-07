@@ -31,7 +31,7 @@ class EventReciverImpl(client: CuratorFramework, port: Int = 7120, val eventrout
     //TODO name threads
     //This is the executor that is used for most of the work in the eventrouter except for sending.
     private val threadPoolExecutor = ThreadPoolExecutor(1, 200, 30, TimeUnit.SECONDS, LinkedBlockingQueue())
-    private val context = threadPoolExecutor.asCoroutineDispatcher()
+    private val myContext = threadPoolExecutor.asCoroutineDispatcher()
 
     companion object {
         val log = this.getLogger()
@@ -53,10 +53,11 @@ class EventReciverImpl(client: CuratorFramework, port: Int = 7120, val eventrout
      */
     override fun onEvent(request: KurojiWebsocket.RawEvent, responseObserver: StreamObserver<KurojiWebsocket.SubResponse>) {
         log.debug("Got an event of type {}", request.name)
-        launch(context) {
-            eventrouter.onRawMessage(request)
+        launch(myContext) {
+            //eventrouter.onRawMessage(request)
             responseObserver.onNext(KurojiWebsocket.SubResponse.getDefaultInstance())
             responseObserver.onCompleted()
+
         }
     }
 

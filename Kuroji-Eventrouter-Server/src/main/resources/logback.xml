@@ -14,7 +14,7 @@
     <logger name="ch.qos.logback.classic" level="WARN">
         <appender-ref ref="STDOUT" />
     </logger>
-
+    <logger name="xyz.usbpc.kuroji" level="TRACE" />
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>

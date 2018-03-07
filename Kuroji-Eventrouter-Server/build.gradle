@@ -36,6 +36,7 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 
     compile 'com.github.Kuroji.Kuroji-Websocket:kuroji-websocket-client:7c68b7ea10'
+    compile 'io.lettuce:lettuce-core:5.0.2.RELEASE'
 
     compile project (':kuroji-eventrouter-shared')
 }
