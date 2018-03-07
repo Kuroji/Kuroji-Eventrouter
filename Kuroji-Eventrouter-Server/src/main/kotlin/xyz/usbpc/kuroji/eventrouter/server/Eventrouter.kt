@@ -30,7 +30,7 @@ class Eventrouter : SubsystemManager {
     init {
         //TODO remove hardcoded connect String
         sender = EventSendSubsystem(curatorClient)
-        cacher = NoOpCacheManager()
+        cacher = RedisCacheManager()
         decoder = MessageDecoderImpl()
         receiver = EventReciverImpl(curatorClient, eventrouter = this)
     }
@@ -46,7 +46,7 @@ class Eventrouter : SubsystemManager {
         sender.stop()
     }
 
-    fun onRawMessage(event: KurojiWebsocket.RawEvent) {
+    suspend fun onRawMessage(event: KurojiWebsocket.RawEvent) {
         val event = decoder.parseRawEvent(event) ?: return
         cacher.onEvent(event)
         sender.onEvent(event.event)
@@ -109,7 +109,7 @@ interface CacheManager : SubsystemManager {
     /**
      * @param event Event that might be cached.
      */
-    fun onEvent(event: InternalEvent)
+    suspend fun onEvent(event: InternalEvent)
 }
 
 /**
@@ -118,5 +118,5 @@ interface CacheManager : SubsystemManager {
 class NoOpCacheManager : CacheManager {
     override suspend fun stop() {}
     override suspend fun awaitTermination() {}
-    override fun onEvent(event: InternalEvent) {}
+    override suspend fun onEvent(event: InternalEvent) {}
 }

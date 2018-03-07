@@ -138,7 +138,7 @@ class MessageDecoderImpl : MessageDecoder {
                     type = Event.EventType.GUILD_MEMBER_ADD
                     msg = GuildOuterClass.Guild.Member.getDefaultInstance().buildFromJson(rawEvent.data)
                     event = com.google.protobuf.Any.pack(msg)
-                    routing = KurojiEventrouter.RoutingInfo.newBuilder().setId((msg as GuildOuterClass.Guild.Member).guildId).build()
+                    routing = KurojiEventrouter.RoutingInfo.newBuilder().setId((msg as GuildOuterClass.Guild.Member).guildId!!.value).build()
                 }
                 "GUILD_MEMBER_REMOVE" -> builder.apply {
                     type = Event.EventType.GUILD_MEMBER_REMOVE
@@ -240,7 +240,8 @@ class MessageDecoderImpl : MessageDecoder {
                     type = Event.EventType.VOICE_STATE_UPDATE
                     msg = VoiceStateOuterClass.VoiceState.getDefaultInstance().buildFromJson(rawEvent.data)
                     event = com.google.protobuf.Any.pack(msg)
-                    routing = KurojiEventrouter.RoutingInfo.newBuilder().setId((msg as VoiceStateOuterClass.VoiceState).channelId).build()
+                    //TODO this will make problems if we recive voice state for DMs... but this is for bots only and they currently can't have that
+                    routing = KurojiEventrouter.RoutingInfo.newBuilder().setId((msg as VoiceStateOuterClass.VoiceState).channelId!!.value).build()
                 }
                 "VOICE_SERVER_UPDATE" -> builder.apply {
                     type = Event.EventType.VOICE_SERVER_UPDATE

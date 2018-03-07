@@ -37,6 +37,9 @@ dependencies {
 
     compile 'com.github.Kuroji.Kuroji-Websocket:kuroji-websocket-client:7c68b7ea10'
     compile 'io.lettuce:lettuce-core:5.0.2.RELEASE'
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.22.Final'
+
 
     compile project (':kuroji-eventrouter-shared')
 }

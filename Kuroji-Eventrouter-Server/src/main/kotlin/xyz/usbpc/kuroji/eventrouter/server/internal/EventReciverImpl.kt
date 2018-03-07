@@ -54,7 +54,7 @@ class EventReciverImpl(client: CuratorFramework, port: Int = 7120, val eventrout
     override fun onEvent(request: KurojiWebsocket.RawEvent, responseObserver: StreamObserver<KurojiWebsocket.SubResponse>) {
         log.debug("Got an event of type {}", request.name)
         launch(myContext) {
-            //eventrouter.onRawMessage(request)
+            eventrouter.onRawMessage(request)
             responseObserver.onNext(KurojiWebsocket.SubResponse.getDefaultInstance())
             responseObserver.onCompleted()
 
