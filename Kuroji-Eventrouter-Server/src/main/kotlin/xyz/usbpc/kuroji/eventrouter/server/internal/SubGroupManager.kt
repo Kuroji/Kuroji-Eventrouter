@@ -35,7 +35,7 @@ class SubGroupManager(val name: String, client: CuratorFramework, val messageMul
     private val stub = MessageRouterSubscriberGrpc.newFutureStub(managedChannel)
     //The root is now our SubGroup we are responsible for
     private val aclient = AsyncCuratorFramework.wrap(client.usingNamespace("eventrouter/clients/$name"))
-    private val topics : Set<Event.EventType> = EnumSet.noneOf(Event.EventType::class.java)
+    private val topics : MutableSet<Event.EventType> = EnumSet.noneOf(Event.EventType::class.java)
     private var controlJob: Job? = null
     //TODO name the threads
     private val threadPoolExecutor = ThreadPoolExecutor(1, 50, 30, TimeUnit.SECONDS, LinkedBlockingQueue())
@@ -72,10 +72,12 @@ class SubGroupManager(val name: String, client: CuratorFramework, val messageMul
                     messageMultiplier.unregisterFunction(topic, name)
                     log.info("SubGroup {} is no longer listening for {}", name, topic)
                 }
+                topics.removeAll(oldTopics)
                 newTopics.forEach { topic ->
                     messageMultiplier.registerFunction(topic, SendWorker(name, stub, context))
                     log.info("SubGroup {} is now listening for {}", name, topic)
                 }
+                topics.addAll(newTopics)
 
                 //Wait for something to change from what we've gotten before
                 if (Watcher.Event.EventType.NodeDeleted == stage.event().await().type)

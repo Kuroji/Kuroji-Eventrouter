@@ -2,6 +2,7 @@ package xyz.usbpc.kuroji.eventrouter.server.internal
 
 import com.google.common.primitives.Longs
 import com.google.protobuf.Int64Value
+import com.google.protobuf.StringValue
 import com.google.protobuf.Timestamp
 import com.google.protobuf.util.JsonFormat
 import io.lettuce.core.RedisClient
@@ -28,10 +29,8 @@ fun ByteArray.toLong() =
 
 class RedisCacheManager : CacheManager {
     val redisClient = RedisClient.create("redis://localhost:6379/0")
-    val redisTextOnlyConnection = redisClient.connect()
     val redisConnection = redisClient.connect(StringByteCodec())
     val redis = redisConnection.async()
-    val textRedis = redisTextOnlyConnection.async()
 
     companion object {
         val log = this.getLogger()
@@ -39,7 +38,6 @@ class RedisCacheManager : CacheManager {
 
     override suspend fun stop() {
         //TODO figure out how to wait for nothing to be in the onEvent code.
-        redisTextOnlyConnection.close()
         redisConnection.close()
     }
 
@@ -221,39 +219,22 @@ class RedisCacheManager : CacheManager {
 
             Event.EventType.GUILD_MEMBER_REMOVE -> {
                 //TODO also check if that user is in any other guild maybe... or maybe just let the TTL take care of this idk
-                val member = event.msg as GuildOuterClass.Guild.Member
-                redis.del("${event.event.botId}:guild:${member.guildId!!.value}:user:${member.user.id}")
+                val member = event.msg as GuildMemberRemoveEventOuterClass.GuildMemberRemoveEvent
+                redis.del("${event.event.botId}:guild:${member.guildId}:user:${member.user.id}")
             }
 
             Event.EventType.GUILD_MEMBER_UPDATE -> {
-                //TODO this is awful I just copy pasted from GUILD_MEMBER_ADD
-                val member = event.msg as GuildOuterClass.Guild.Member
+                val member = event.msg as GuildMemberUpdateEventOuterClass.GuildMemberUpdateEvent
                 //Let's cache this user!
                 redis.set("${event.event.botId}:user:${member.user.id}", member.user.toByteArray())
 
-                val memberBuilder = GuildOuterClass.Guild.Member.newBuilder(member)
-                        .clearGuildId()
-                        .clearUser()
-                        .clearRoles()
-                        .build()
-                //Firstly the member object itself
-                redis.hset(
-                        "${event.event.botId}:guild:${member.guildId!!.value}:user:${member.user.id}",
-                        "member",
-                        memberBuilder.toByteArray()
-                )
-                //And the roles the user is part of
-                val roleIds = CacheFormats.Fixed64List.newBuilder().addAllValues(member.rolesList).build()
-                redis.hset(
-                        "${event.event.botId}:guild:${member.guildId!!.value}:user:${member.user.id}",
-                        "roles",
-                        roleIds.toByteArray()
-                )
+                //TODO cache this properyl
+
             }
             Event.EventType.GUILD_MEMBERS_CHUNCK -> {
                 val membersChunck = event.msg as GuildMembersChunkEventOuterClass.GuildMembersChunkEvent
                 membersChunck.membersList.forEach { member ->
-                    //TODO this is awful I just copy pasted from GUILD_MEMBER_ADD... moytly
+                    //TODO this is awful I just copy pasted from GUILD_MEMBER_ADD... mostly
                     val member = event.msg as GuildOuterClass.Guild.Member
                     //Let's cache this user!
                     redis.set("${event.event.botId}:user:${member.user.id}", member.user.toByteArray())
@@ -334,6 +315,10 @@ class RedisCacheManager : CacheManager {
                         "roles",
                         roleIds.toByteArray()
                 )
+
+                if (presence.user.username != "") {
+                    redis.set("${event.event.botId}:user:${presenceUpdate.user.id}", presenceUpdate.user.toByteArray())
+                }
             }
 
             //Event.EventType.TYPING_START -> { }
